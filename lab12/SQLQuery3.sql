@@ -166,13 +166,14 @@ select * from товарыы
 
 --task3
  
+ exec sp_helpindex товарыы
 declare @point varchar(32)
 
 begin try
 	begin tran
 		set @point = 'p1'
 		save tran  @point --контр точка 1
-		insert товары values ('дверь',530,'входня',18,'Завод №3'); --ошибка   
+		insert товарыы values ('дверь',530,'входня',18,'Завод №3'); --ошибка   
 		set @point = 'p2'
 		save tran @point --контр. точка  2
 		delete товарыы where наименование_товара = 'Тумбочка'
@@ -181,7 +182,7 @@ end try
 
 begin catch
 	print 'ошибка: '+ case 
-		when error_number() = 2627 and patindex('%STUDENT_PK%', error_message()) > 0 then 'дублирование студента' 
+		when error_number() = 2627 and patindex('%PK__товарыы__F21991997A536A0B%', error_message()) > 0 then 'дублирование студента' 
 		else 'неизвестная ошибка: '+ cast(error_number() as	  varchar(5)) + error_message()  
 	end; 
     if @@trancount > 0 -- если транзакция не завершена
@@ -248,6 +249,8 @@ end 'результат', покупатель from Заказы  where наименование_заказанного_товара =
           insert Заказы values (12,23,580, '2020-01-12', 'Стул','ООО Амимебель');
           commit; 
 
+
+
 --task7 serializable
 insert товарыы values('Мягкая игрушка',879,'Акула', 75, 'Завод №5')
 insert товарыы values('Подушка',543,'Мягкая', 43, 'Завод №3')
@@ -289,5 +292,5 @@ begin tran
 	select 
 	(select count (*) from заказы where покупатель = 'покупатель') 'Заказы',
 	(select count (*) from покупатель where покупатель = 'покупатель') 'Заказчики';
-
+	delete покупатель  where адрес = 'Лида'
 select * from покупатель
